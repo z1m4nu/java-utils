@@ -17,30 +17,15 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author e.soden
  *
  */
 public final class FileUtil {
-
-	/**
-	 * Wraps the input stream with GZIPInputStream if needed.
-	 * 
-	 * @param inputStream
-	 * @return
-	 * @throws IOException
-	 * @throws ZipConvertionException
-	 */
-	public static InputStream convertToZip(InputStream inputStream) throws IOException, ZipConvertionException {
-		inputStream = new ZipInputStream(inputStream);
-
-		if (((ZipInputStream) inputStream).getNextEntry() == null) {
-			throw new ZipConvertionException("Stream is not a zip file.");
-		}
-
-		return inputStream;
-	}
+	private static final Log log = LogFactory.getLog(FileUtil.class);
 
 	/**
 	 * 
@@ -49,7 +34,7 @@ public final class FileUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static boolean unzip(InputStream inputStream, String output) throws IOException {
+	public static boolean unzip(InputStream inputStream, String output) throws IOException, ZipException {
 
 		ZipInputStream zis = new ZipInputStream(inputStream);
 		ZipEntry entry;
@@ -161,18 +146,33 @@ public final class FileUtil {
 	 * 
 	 * @param dirName
 	 *            - full path to the folder
-	 * @throws SecurityException
+	 * @throws Exception
 	 *             - in case you don't have permission to create the folder
 	 */
-	public static void createFolder(String dirName) throws SecurityException {
-		File theDir = null;
-		try {
-			theDir = new File(dirName);
+	public static void createFolder(String dirName) throws Exception {
+		String sep = "/";
+		int index = 0;
+		if ((index = dirName.indexOf("\\")) > 0) {
+			sep = "\\\\";
+		} else {
+			sep = "/";
+		}
+
+		String pathPart[] = dirName.split(sep);
+		StringBuffer pathToCreate = new StringBuffer();
+		for (String p : pathPart) {
+			if (pathToCreate.length() > 0) {
+				pathToCreate.append(sep);
+			}
+
+			pathToCreate.append(p);
+
+			File theDir = new File(pathToCreate.toString());
 			if (!theDir.exists()) {
 				theDir.mkdir();
 			}
-		} finally {
 			theDir = null;
+
 		}
 	}
 
