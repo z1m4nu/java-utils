@@ -3,6 +3,8 @@
 */
 package org.crossroad.util.renderer;
 
+import org.crossroad.util.time.TimeMonitorController;
+
 /**
  * @author e.soden
  *
@@ -31,7 +33,7 @@ public class JSonTableRenderer extends StringTableRenderer {
 	@Override
 	public void doRendering() throws RenderException {
 
-		startTime();
+		sw.start();
 		this.buffer = null;
 		this.buffer = new StringBuffer();
 		try {
@@ -67,7 +69,8 @@ public class JSonTableRenderer extends StringTableRenderer {
 		} catch (Exception e) {
 			throw new RenderException(e);
 		} finally {
-			stopTime("JSONRENDER",false);
+			sw.stop();
+			TimeMonitorController.getInstance().addStepTime("JSONRENDER",sw.getTime());
 		}
 
 	}

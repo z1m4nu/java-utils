@@ -40,9 +40,9 @@ public class StringTableRenderer extends AbstractTableRenderer {
 				buffer.append(table.getSeparator());
 			}
 			buffer.append("\n");
-
 			for (String[] row : table.getRows()) {
 				for (String col : row) {
+					
 					buffer.append(col.replace(table.getSeparator(), table.getBanalyzer()));
 					buffer.append(table.getSeparator());
 

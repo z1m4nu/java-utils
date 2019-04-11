@@ -5,6 +5,8 @@ package org.crossroad.util.time;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author e.soden
@@ -24,21 +26,22 @@ public class TimeMonitorController {
 		times.put(TOTAL, 0L);
 	}
 	
-	public static TimeMonitorController getInstance() {
+	public synchronized static TimeMonitorController getInstance() {
 		return INSTANCE;
 	}
 	
-	public void addToTotalTime(long time)
+	public synchronized void addToTotalTime(long time)
 	{
 		this.totalTime += time;
 	}
 	
-	public void addStepTime(String step, long time)
+	public synchronized void addStepTime(String step, long time)
 	{
-		this.times.put(step, time);
+
+		this.times.put(step +"#"+UUID.randomUUID().toString(), time);
 	}
 	
-	public long getStepTime(String step)
+	public synchronized long getStepTime(String step)
 	{
 		return this.times.get(step);
 	}
@@ -48,4 +51,23 @@ public class TimeMonitorController {
 		return this.totalTime;
 	}
 
+	
+	public String summary()
+	{
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Total execution time " + getTotalTime() + " ms.\n");
+		
+		for (String key:times.keySet())
+		{
+			buffer.append("\t"+key + " execution time "+times.get(key)+ " ms.\n");
+		}
+		
+		return buffer.toString();
+	}
+	
+	public Set<String> getSteps()
+	{
+		return this.times.keySet();
+	}
 }

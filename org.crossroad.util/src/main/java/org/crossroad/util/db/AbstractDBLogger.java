@@ -25,7 +25,13 @@ public abstract class AbstractDBLogger extends AbstractLogger {
 	public AbstractDBLogger() {
 	}
 
-	protected void connect(String id, String driverName, String url, String username, String password) throws Exception {
+	protected void connect(DBConnector connector) throws Exception {
+		this.connect(connector.getId(), connector.getDriverClass(), connector.getUrl(), connector.getUsername(),
+				connector.getPassword());
+	}
+
+	protected void connect(String id, String driverName, String url, String username, String password)
+			throws Exception {
 		Class driverClass = this.getClass().getClassLoader().loadClass(driverName);
 		Driver driver = (Driver) driverClass.newInstance();
 
@@ -35,40 +41,35 @@ public abstract class AbstractDBLogger extends AbstractLogger {
 		this.connections.put(id, driver.connect(url, props));
 
 	}
-	
-	protected Connection getConnection(String key) throws Exception
-	{
-		if (this.connections.containsKey(key))
-		{
+
+	protected Connection getConnection(String key) throws Exception {
+		if (this.connections.containsKey(key)) {
 			return this.connections.get(key);
 		} else {
-			throw new Exception("Connection ["+key+"] does not exist");
+			throw new Exception("Connection [" + key + "] does not exist");
 		}
 	}
-	
-	protected void disconnect(String key) throws SQLException
-	{
-		if (this.connections.containsKey(key))
-		{
+
+	protected void disconnect(String key) throws SQLException {
+		if (this.connections.containsKey(key)) {
 			this.connections.get(key).close();
 		}
 	}
 
-	protected void disconnectAll()  {
+	protected void disconnectAll() {
 		if (!this.connections.isEmpty()) {
 			for (String key : connections.keySet()) {
-				
+
 				try {
 					this.disconnect(key);
 				} catch (SQLException e) {
-					log.error("Unable to close connection ["+key+"]",e);
+					log.error("Unable to close connection [" + key + "]", e);
 				}
 			}
 		}
 	}
-	
-	protected PreparedStatement getPrepareStatement(String connId, String statement) throws SQLException, Exception
-	{
+
+	protected PreparedStatement getPrepareStatement(String connId, String statement) throws SQLException, Exception {
 		return this.getConnection(connId).prepareStatement(statement);
 	}
 

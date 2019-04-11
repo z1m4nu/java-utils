@@ -12,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.crossroad.util.AbstractLogger;
+import org.crossroad.util.time.TimeMonitorController;
 
 public class MailUtil extends AbstractLogger {
 	private String body = null;
@@ -30,7 +31,7 @@ public class MailUtil extends AbstractLogger {
 	public void sendHTMLMail() throws Exception {
 
 		try {
-			startTime();
+			sw.start();
 			this.openSession();
 			// Create a default MimeMessage object.
 			Message message = new MimeMessage(session);
@@ -63,7 +64,8 @@ public class MailUtil extends AbstractLogger {
 			log.error("Unable to send mail", e);
 			throw e;
 		} finally {
-			stopTime("SENDING_MAIL",true);
+			sw.stop();
+			TimeMonitorController.getInstance().addStepTime("SENDING_MAIL", sw.getTime());
 		}
 	}
 
