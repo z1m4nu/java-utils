@@ -16,7 +16,7 @@
 		<javamail.version>1.6.0</javamail.version>
 		<javaactivation-version>1.1.1</javaactivation-version>
 		<jackson-2-version>2.9.7</jackson-2-version>
-		<log4j-version>2.11.1</log4j-version>
+		<log4j-version>2.13.3</log4j-version>
 		<disruptor-version>3.4.2</disruptor-version>
 	</properties>
 
