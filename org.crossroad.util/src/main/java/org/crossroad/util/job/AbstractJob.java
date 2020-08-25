@@ -3,6 +3,8 @@
  */
 package org.crossroad.util.job;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +83,7 @@ public abstract class AbstractJob extends AbstractTimer implements IJob {
 
 	@Override
 	public void work() throws JobException {
-		sw.start();
+		final Instant start = Instant.now();
 		log.info("\n\t- Job ID:\t" + this.id);
 		initialize();
 
@@ -103,8 +105,8 @@ public abstract class AbstractJob extends AbstractTimer implements IJob {
 			results.setTotal(total);
 			results.setUnproceed(unproceed);
 
-			sw.stop();
-			saveTime("MAIN", sw.getTime());
+			
+			saveTime("MAIN", Duration.between(start, Instant.now()).toMillis());
 
 			results.setTimes(getTimes());
 
@@ -144,6 +146,7 @@ public abstract class AbstractJob extends AbstractTimer implements IJob {
 	}
 
 	protected void submitTask(AbstractTask task) {
+		this.total++;
 		executorService.submit(task);
 	}
 

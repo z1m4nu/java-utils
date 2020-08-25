@@ -14,11 +14,13 @@ import org.crossroad.util.Status;
  * @author e.soden
  *
  */
-public abstract class AbstractTask extends AbstractTimer  implements Runnable{
+public abstract class AbstractTask extends AbstractTimer  implements Runnable, ITask{
 	
 
 	private List<ITaskListener> listeners = new ArrayList<ITaskListener>();
 	private String id = UUID.randomUUID().toString();
+	
+	private Status status = Status.UNKNOWN;
 	
 	/**
 	 * 
@@ -46,12 +48,35 @@ public abstract class AbstractTask extends AbstractTimer  implements Runnable{
 			listener.setStatus(status, getTimes());
 		}
 	}
+	
+	protected synchronized void informListeners()
+	{
+		for (ITaskListener listener:listeners)
+		{
+			listener.onFinish(this);
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see org.crossroad.util.job.ITask#getId()
+	 */
+	@Override
 	public String getId() {
 		return id;
 	}
 	
 	protected abstract void clean(); 
 	
+	/* (non-Javadoc)
+	 * @see org.crossroad.util.job.ITask#getStatus()
+	 */
+	@Override
+	public Status getStatus() {
+		return status;
+	}
+	
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 	
 }

@@ -15,6 +15,23 @@ public class StringUtil {
 		// TODO Auto-generated constructor stub
 	}
 
+	public static String transform(String template, Map<String, String> data) throws Exception {
+		Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}", Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(template);
+
+		while (matcher.find()) {
+			String key = matcher.group(1);
+			String replace = null;
+
+			replace = data.get(key);
+
+			template = template.replaceAll("\\$\\{" + key + "\\}", replace);
+
+		}
+
+		return template;
+	}
+	
 	public static String computeString(String template, Map<String, IDBData> values, String separator)
 			throws Exception {
 		String parsedString = null;

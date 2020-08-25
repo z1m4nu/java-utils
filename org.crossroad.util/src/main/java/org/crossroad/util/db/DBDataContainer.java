@@ -7,23 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.Date;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UnknownFormatConversionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.crossroad.util.AbstractLogger;
 
@@ -31,13 +19,13 @@ import org.crossroad.util.AbstractLogger;
  * @author e.soden
  *
  */
-public class DBDataContainer extends AbstractLogger {
+public class DBDataContainer extends AbstractLogger implements Serializable {
 	private Map<String, IDBData> values = new HashMap<String, IDBData>();
 
 	/**
 	 * 
 	 */
-	public DBDataContainer() {
+	protected DBDataContainer() {
 		super();
 	}
 
@@ -60,13 +48,13 @@ public class DBDataContainer extends AbstractLogger {
 	public String computeString(String template, String splitter, String separator) throws Exception {
 		String parsedString = null;
 
-		log.debug("Template [" + template + "]");
+		log.trace("Template [" + template + "]");
 
 		parsedString = template.replace(splitter, separator);
 
-		log.debug("Template with separator [" + parsedString + "]");
+		log.trace("Template with separator [" + parsedString + "]");
 
-		Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}", Pattern.DOTALL);
+		Pattern pattern = Pattern.compile("\\$\\[(.+?)\\]", Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(parsedString);
 
 		while (matcher.find()) {
@@ -82,11 +70,11 @@ public class DBDataContainer extends AbstractLogger {
 					replace = values.get(key).getValueAsString();
 			}
 
-			parsedString = parsedString.replaceAll("\\$\\{" + key + "\\}", replace);
+			parsedString = parsedString.replaceAll("\\$\\[" + key + "\\]", replace);
 
 		}
 
-		log.debug("ParsedString [" + parsedString + "]");
+		log.trace("ParsedString [" + parsedString + "]");
 		return parsedString;
 	}
 
@@ -102,7 +90,18 @@ public class DBDataContainer extends AbstractLogger {
 
 		return container;
 	}
+	
+	public static DBDataContainer createEmpty() {
+		return new DBDataContainer();
+	}
 
+	public static DBDataContainer loadFromDatas(Map<String, IDBData> map) {
+		DBDataContainer container = createEmpty();
+		container.addAll(map);
+		
+		return container;
+	}
+	
 	public synchronized void serialize(String output) {
 		ObjectOutputStream writer = null;
 		try {

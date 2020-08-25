@@ -3,11 +3,15 @@
  */
 package org.crossroad.util;
 
+import java.io.Serializable;
+
+import org.crossroad.util.pdf.PDFUtil;
+
 /**
  * @author e.soden
  *
  */
-public class PageSize {
+public class PageSize implements Serializable{
 	/**
 	 * 
 	 */
@@ -88,8 +92,11 @@ public class PageSize {
 		default:
 			break;
 		}
-
+		
 		return size;
+	}
+	public PageSize() {
+		
 	}
 
 	/**
@@ -103,7 +110,7 @@ public class PageSize {
 	 * @param witdh the witdh to set
 	 */
 	public void setWitdh(float witdh) {
-		this.witdh = witdh;
+		this.witdh = PDFUtil.inchToPDFSize(witdh);
 	}
 
 	/**
@@ -117,7 +124,7 @@ public class PageSize {
 	 * @param height the height to set
 	 */
 	public void setHeight(float height) {
-		this.height = height;
+		this.height = PDFUtil.inchToPDFSize(height);
 	}
 
 	

@@ -21,6 +21,15 @@ public class ScalableThreadPoolExecutor extends ThreadPoolExecutor {
 		
 
 	}
+	
+	public static ThreadPoolExecutor get() {
+		int cpu = Runtime.getRuntime().availableProcessors();
+		int corePool = (cpu <= 4) ? cpu : cpu - 4;
+		int maxPool = (cpu <= 2) ? cpu : cpu - 2;
+		long timeout = 1000;
+		
+		return get(corePool, maxPool, timeout, TimeUnit.MILLISECONDS);
+	}
 
 	public static ThreadPoolExecutor get(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
 			TransferQueue<Runnable> workQueue) {

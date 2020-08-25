@@ -3,9 +3,12 @@
  */
 package org.crossroad.util.font;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.crossroad.util.font.impl.Font;
 
 
 
@@ -67,8 +70,18 @@ public class FontContainer {
 	}
 
 	
-	
+	public void setFont(String key, String Path) {
+		map.put(key, new Font(Paths.get(Path)));
+	}
 
+	public void setFonts(Map<String,String> fonts)
+	{
+		for(String key: fonts.keySet())
+		{
+			setFont(key, fonts.get(key));
+		}
+	}
+	
 	/**
 	 * @param m
 	 * @see java.util.Map#putAll(java.util.Map)

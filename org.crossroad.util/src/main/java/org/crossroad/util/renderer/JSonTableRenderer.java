@@ -3,6 +3,9 @@
 */
 package org.crossroad.util.renderer;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import org.crossroad.util.time.TimeMonitorController;
 
 /**
@@ -32,8 +35,8 @@ public class JSonTableRenderer extends StringTableRenderer {
 
 	@Override
 	public void doRendering() throws RenderException {
+		final Instant start = Instant.now();
 
-		sw.start();
 		this.buffer = null;
 		this.buffer = new StringBuffer();
 		try {
@@ -69,8 +72,7 @@ public class JSonTableRenderer extends StringTableRenderer {
 		} catch (Exception e) {
 			throw new RenderException(e);
 		} finally {
-			sw.stop();
-			TimeMonitorController.getInstance().addStepTime("JSONRENDER",sw.getTime());
+			TimeMonitorController.getInstance().addStepTime("JSONRENDER",Duration.between(start, Instant.now()).toMillis());
 		}
 
 	}

@@ -1,5 +1,7 @@
 package org.crossroad.util.mail;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -29,9 +31,9 @@ public class MailUtil extends AbstractLogger {
 	}
 
 	public void sendHTMLMail() throws Exception {
-
+		final Instant start = Instant.now();
 		try {
-			sw.start();
+			
 			this.openSession();
 			// Create a default MimeMessage object.
 			Message message = new MimeMessage(session);
@@ -64,8 +66,8 @@ public class MailUtil extends AbstractLogger {
 			log.error("Unable to send mail", e);
 			throw e;
 		} finally {
-			sw.stop();
-			TimeMonitorController.getInstance().addStepTime("SENDING_MAIL", sw.getTime());
+
+			TimeMonitorController.getInstance().addStepTime("SENDING_MAIL", Duration.between(start,Instant.now()).toMillis());
 		}
 	}
 

@@ -14,4 +14,6 @@ import org.crossroad.util.time.TimeContent;
  */
 public interface ITaskListener {
 	void setStatus(Status status, Map<String, TimeContent> times);
+	
+	void onFinish(ITask task);
 }
